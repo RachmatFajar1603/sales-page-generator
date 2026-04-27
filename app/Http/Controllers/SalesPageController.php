@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SalesPage;
+use Illuminate\Http\Request;
+
+class SalesPageController extends Controller
+{
+    public function index()
+    {
+        $salesPages = auth()->user()
+            ->salesPages()
+            ->latest()
+            ->paginate(10);
+
+        return view('sales-pages.history', compact('salesPages'));
+    }
+
+    public function preview(SalesPage $salesPage)
+    {
+        $this->authorize('view', $salesPage);
+        return view('sales-pages.preview', compact('salesPage'));
+    }
+
+    public function destroy(SalesPage $salesPage)
+    {
+        $this->authorize('delete', $salesPage);
+        $salesPage->delete();
+
+        return redirect()->route('sales-pages.history')
+            ->with('success', 'Sales page deleted successfully!');
+    }
+
+    public function export(SalesPage $salesPage)
+    {
+        $this->authorize('view', $salesPage);
+
+        $html = view('sales-pages.export', compact('salesPage'))->render();
+
+        return response($html)
+            ->header('Content-Type', 'text/html')
+            ->header('Content-Disposition', 'attachment; filename="' . str()->slug($salesPage->product_name) . '.html"');
+    }
+}
