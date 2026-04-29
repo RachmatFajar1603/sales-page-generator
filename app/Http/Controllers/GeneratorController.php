@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\SalesPage;
-use App\Services\GeminiService;
+use App\Services\GroqService;
 use Illuminate\Http\Request;
 use Exception;
 
 class GeneratorController extends Controller
 {
-    protected GeminiService $gemini;
+    protected GroqService $groq;
 
-    public function __construct(GeminiService $gemini)
+    public function __construct(GroqService $groq)
     {
-        $this->gemini = $gemini;
+        $this->groq = $groq;
     }
 
     public function create()
@@ -34,8 +34,14 @@ class GeneratorController extends Controller
             'template'              => 'required|in:modern,minimalist,dark',
         ]);
 
+        if (! empty($validated['price'])) {
+            $validated['price'] = (int) str_replace('.', '', $validated['price']);
+        }
+
+
+
         try {
-            $generated = $this->gemini->generateSalesPage($validated);
+            $generated = $this->groq->generateSalesPage($validated);
 
             $salesPage = SalesPage::create([
                 'user_id'               => auth()->id(),

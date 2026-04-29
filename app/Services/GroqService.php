@@ -5,14 +5,15 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
-class GeminiService
+class GroqService
 {
     protected string $apiKey;
-    protected string $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    protected string $apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+    protected string $model = 'llama-3.3-70b-versatile';
 
     public function __construct()
     {
-        $this->apiKey = config('services.gemini.key');
+        $this->apiKey = config('services.groq.key');
     }
 
     public function generateSalesPage(array $productData): array
@@ -21,42 +22,45 @@ class GeminiService
 
         try {
             $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->timeout(60)->post($this->apiUrl . '?key=' . $this->apiKey, [
-                'contents' => [
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type'  => 'application/json',
+            ])->timeout(60)->post($this->apiUrl, [
+                'model'       => $this->model,
+                'temperature' => 0.8,
+                'max_tokens'  => 4000,
+                'messages'    => [
                     [
-                        'parts' => [
-                            ['text' => $prompt]
-                        ]
-                    ]
-                ],
-                'generationConfig' => [
-                    'temperature'     => 0.8,
-                    'maxOutputTokens' => 4000,
+                        'role'    => 'system',
+                        'content' => 'You are an expert copywriter. Always respond with valid JSON only. No markdown, no explanation, no code blocks. Just raw JSON.',
+                    ],
+                    [
+                        'role'    => 'user',
+                        'content' => $prompt,
+                    ],
                 ],
             ]);
 
             if ($response->failed()) {
-                throw new Exception('Gemini API error: ' . $response->body());
+                throw new Exception('Groq API error: ' . $response->body());
             }
 
-            $content = $response->json('candidates.0.content.parts.0.text');
+            $content = $response->json('choices.0.message.content');
 
             if (!$content) {
-                throw new Exception('Empty response from Gemini API');
+                throw new Exception('Empty response from Groq API');
             }
 
             return $this->parseResponse($content);
 
         } catch (Exception $e) {
-            throw new Exception('Failed to generate sales page: ' . $e->getMessage());
+            throw new Exception('Failed to generate: ' . $e->getMessage());
         }
     }
 
     private function buildPrompt(array $data): string
     {
         return <<<PROMPT
-You are an expert copywriter and marketing specialist. Generate a complete, persuasive sales page for the following product/service.
+Generate a complete persuasive sales page for this product. Return ONLY valid JSON, no markdown, no explanation.
 
 PRODUCT INFORMATION:
 - Product Name: {$data['product_name']}
@@ -67,8 +71,7 @@ PRODUCT INFORMATION:
 - Unique Selling Points: {$data['unique_selling_points']}
 - Tone: {$data['tone']}
 
-Generate a complete sales page with the following sections. Return ONLY valid JSON, no markdown, no explanation, no code blocks:
-
+Return this exact JSON structure:
 {
   "headline": "compelling main headline",
   "sub_headline": "supporting sub-headline",
@@ -87,7 +90,7 @@ Generate a complete sales page with the following sections. Return ONLY valid JS
     "original_price": "original price if discount",
     "currency": "IDR or USD",
     "billing": "one-time or /month",
-    "includes": ["what's included 1", "what's included 2"]
+    "includes": ["included item 1", "included item 2"]
   },
   "cta": {
     "primary": "primary CTA button text",
