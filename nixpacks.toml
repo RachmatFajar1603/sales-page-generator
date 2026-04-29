@@ -1,8 +1,14 @@
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo_pgsql", "php82Packages.composer"]
-
-[phases.install]
-cmds = ["composer install --no-dev --optimize-autoloader"]
+nixPkgs = [
+  "php82",
+  "php82Extensions.pdo_pgsql",
+  "php82Extensions.mbstring",
+  "php82Extensions.bcmath",
+  "php82Extensions.fileinfo",
+  "php82Extensions.openssl",
+  "php82Extensions.tokenizer",
+  "php82Extensions.xml"
+]
 
 [start]
 cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
