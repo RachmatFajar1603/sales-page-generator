@@ -1,58 +1,58 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SalesGen — AI Sales Page Generator
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+An AI-powered web application that transforms product information into complete, structured, and persuasive sales pages instantly.
 
-## About Laravel
+## 🚀 Live Demo
+**URL:** [your-railway-url]
+**Demo Account:**
+- Email: demo@salespage.com
+- Password: demo123456
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🛠 Tech Stack
+- **Backend:** Laravel 11 (PHP)
+- **Frontend:** Blade + Tailwind CSS v4
+- **Database:** MySQL
+- **AI:** Groq API (LLaMA 3.3 70B)
+- **Deploy:** Railway
+- **Export:** DomPDF (PDF), html2canvas (PNG), HTML
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Features
+- User Authentication (Register, Login, Logout) via Laravel Auth
+- AI-powered sales page generation with Groq API
+- 3 Design Templates: Modern, Minimalist, Dark Luxury
+- 5 Tone Options: Persuasive, Formal, Casual, Urgent, Friendly
+- Live Preview of generated sales page
+- Export as HTML, PDF, or PNG
+- Generation History with search, preview, and delete
+- Responsive design for all screen sizes
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📋 How It Works
+1. Register or login to your account
+2. Fill in your product/service details
+3. Choose your preferred tone and design template
+4. Click "Generate" — AI creates your complete sales page in seconds
+5. Preview, export (HTML/PDF/PNG), or delete from history
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+## 🔧 Local Installation
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/USERNAME/sales-page-generator.git
+cd sales-page-generator
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+# Configure .env with your DB and GROQ_API_KEY
+php artisan migrate --seed
+npm run dev
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 🤖 AI Logic
+User input → GroqService builds structured prompt → Groq API (LLaMA 3.3 70B) returns JSON → Parsed and stored in MySQL → Rendered as styled Blade template
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📁 Project Structure
+- `app/Services/GroqService.php` — AI API integration
+- `app/Http/Controllers/GeneratorController.php` — Handle generation flow
+- `app/Http/Controllers/SalesPageController.php` — CRUD & export
+- `resources/views/sales-pages/templates/` — 3 design templates
+- `database/migrations/` — Database schema
